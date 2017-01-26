@@ -42,17 +42,18 @@ public class Project1 {
             aud = readAud(file);
             display(aud);
             System.out.println("Which Row would you like to book for");
-            row = inputS.nextInt();
+            row = inputS.nextInt() - 1;
             System.out.println("Which Seat would you like your booking to start at");
-            seat = inputS.nextInt();
+            seat = inputS.nextInt() - 1;
             System.out.println("How many seats would you like");
             quan = inputS.nextInt();
             if(available(aud,row,seat,quan)){
                 reserve(aud,row,seat,quan,file);
+                System.out.println("Seat reserved");
             }
             else{
                 if(available(aud,row,findBest(aud,row,quan),quan)){
-                    System.out.println("I can get you seat " + (findBest(aud,row,quan) - 1) + " Would you like that seat instead Y/N");
+                    System.out.println("I can get you seat " + (findBest(aud,row,quan) + 1) + " Would you like that seat instead Y/N");
                     char YN = (char) System.in.read();
                     if(YN == 'Y'){
                         reserve(aud,row,findBest(aud,row,quan),quan,file);
@@ -102,11 +103,14 @@ public class Project1 {
         return aud;
     }
     
+    //Prints formated auditorium
     public static void display(char[][] aud){
+        //Prints colum headers as 1 digit
         System.out.print(" ");
-        for(int i = 1; i < aud[0].length;i++){
+        for(int i = 1; i <= aud[0].length;i++){
             System.out.print(i%10);
         }
+        //Loops through 2d array and prints seats
         System.out.print("\n");
         for(int i = 0; i < aud.length;i++){
             System.out.print(i+1);
@@ -118,20 +122,25 @@ public class Project1 {
         
     }
     
+    //Changes the requested seats to reserved and then writes to file
     public static void reserve(char[][] aud, int row, int seat, int quantity,File file)throws IOException{
-        for(int i = 1; i <= quantity;i++){
+        for(int i = 0; i < quantity;i++){
             aud[row][seat+i] = '.';
         }
         writeF(aud,file);
     }
     
+    //Check is the requested seats are avalible
     public static boolean available(char[][] aud, int row, int seat, int quantity){
+        //Checks if best seat didn't find a seat
         if(seat == 999){
             return false;
         }
+        //Checks if requested seats would go out of bounds
         if(seat + quantity > aud[0].length)
             return false;
-        for(int i = 1; i <= quantity;i++){
+        //Checks if seats are avalible
+        for(int i = 0; i < quantity;i++){
             if(aud[row][seat+i] == '.'){
                 return false;
             }
@@ -139,6 +148,7 @@ public class Project1 {
         return true;
     }
     
+    //Counts reserved seat and open seats and puts them in array passed in
     public static void count(int[] seats, File file) throws IOException{
     char[][] aud = readAud(file);
         for(int i = 0;i < aud.length;i++){
@@ -153,6 +163,7 @@ public class Project1 {
         }
     }
     
+    //Opens and output stream and writes 2d array to file
     public static void writeF(char[][] aud, File file)throws IOException{
         OutputStream f = new FileOutputStream(file);
         for(int i = 0; i < aud.length;i++){
@@ -164,7 +175,7 @@ public class Project1 {
             
         }  
     }
-    
+    /*
     public static int Best(char[][] aud, int row, int quan){
         int middle = aud[row].length / 2;
         int left = 999;
@@ -215,19 +226,25 @@ public class Project1 {
         }
         //return Math.min(right,left - quan);
     }
-    
+    */
+    //looks for seat closets to the middle
     public static int findBest(char[][] aud, int row, int quan){
-        for(int i = aud[0].length / 2 ; i > 0;i--){
-            if(available(aud,row, (aud[0].length / 2) + 1,quan)){
-                return (aud[0].length / 2) + 1;
+        int middle = (aud[0].length -1) / 2;
+        for(int i = 0; i <= middle;i++){
+            //goes back from middle
+            if(available(aud,row, middle - i,quan)){
+                return middle - i;
             }
-            else if(available(aud,row, (aud[0].length / 2) - 1,quan)){
-                return (aud[0].length / 2) - 1;
+            //goes forward from middle
+            else if(available(aud,row, middle + i + 1,quan)){
+                return middle + i+ 1;
             }
         }
+        //returned when no seats are found on the row
         return 999;
     }
     
+    //Used to foramt data as a table
     public static void print() throws IOException{
         //open, reserved
         int[] tmp = new int[2];
@@ -235,11 +252,13 @@ public class Project1 {
         int totalO = 0;
         int totalS = 0;
         
+        //Prints headers
         System.out.print("\nAuditorium: ");
         System.out.print(" Reserved ");
         System.out.print("Open ");
         System.out.print(" Sales");
         
+        //First row with data
         System.out.print("\nAuditorium 1 ");
         count(tmp,new File("A1.txt"));
         System.out.print(tmp[1] + "       ");
@@ -250,6 +269,7 @@ public class Project1 {
         tmp[0] = 0;
         tmp[1] = 0;
         
+        //Seconds row
         System.out.print("\nAuditorium 2 ");
         count(tmp,new File("A2.txt"));
         System.out.print(tmp[1] + "       ");
@@ -260,6 +280,7 @@ public class Project1 {
         tmp[0] = 0;
         tmp[1] = 0;
         
+        //third row
         System.out.print("\nAuditorium 3 ");
         count(tmp,new File("A3.txt"));
         System.out.print(tmp[1] + "       ");
@@ -272,6 +293,7 @@ public class Project1 {
         
         totalS = totalR * 7;
         
+        //prints totals
         System.out.print("\nTotal        ");
         System.out.print(totalR + "      ");
         System.out.print(totalO + "   $");
