@@ -14,8 +14,8 @@ public class Project1 {
         Scanner inputS = new Scanner(System.in);
         File file = new File("");
         char[][] aud;
-        int row;
-        int seat;
+        int row = 0;
+        int seat = 0;
         int quan;
         boolean running = true;
         //Promts user to pick a auditorium, until they exit
@@ -36,12 +36,44 @@ public class Project1 {
                 //Reads the file and takes in input for seat booking
                 aud = readAud(file);
                 display(aud);
+                //Checks row chosen is valid
+                boolean roww = true;
                 System.out.println("Which Row would you like to book for");
-                row = inputS.nextInt() - 1;
+                while(roww){
+                    row = inputS.nextInt() - 1;
+                    if(row >= aud.length){
+                        System.out.println("Not a valid row, enter a new row");
+                    }
+                    else{
+                        roww = false;
+                    }
+                }
+                //Checks seat chosen is valid
                 System.out.println("Which Seat would you like your booking to start at");
-                seat = inputS.nextInt() - 1;
+                boolean seatw = true;
+                while(seatw){
+                    seat = inputS.nextInt() - 1;
+                    if(seat >= aud[0].length){
+                        System.out.println("Not a valid seat, enter a new seat");
+                    }
+                    else{
+                        seatw = false;
+                    }
+                }
+                
                 System.out.println("How many seats would you like");
                 quan = inputS.nextInt();
+                boolean quanw = true;
+                while(quanw){
+                    quan = inputS.nextInt();
+                    if(quan < 0){
+                        System.out.println("Not a positive number of seats");
+                    }
+                    else{
+                        quanw = false;
+                    }
+                }
+                
                 //checks if user enterd an open seat
                 if (available(aud, row, seat, quan)) {
                     reserve(aud, row, seat, quan, file);
@@ -67,7 +99,6 @@ public class Project1 {
                 running = false;
             }
         }
-
         //Prints formated data
         print();
 
@@ -168,58 +199,6 @@ public class Project1 {
         }
     }
 
-    /*
-    public static int Best(char[][] aud, int row, int quan){
-        int middle = aud[row].length / 2;
-        int left = 999;
-        int right = 999;
-        for(int i = middle;i >= 0 + quan;i--){
-            if(aud[row][i] == '#'){
-                boolean avial = true;
-                for(int j = 1; j <= quan;j++){
-                    if(aud[row][i+j] == '#'){
-                        avial = true;
-                    }
-                    else{
-                        avial = false;
-                    }
-                        
-                }
-                if(avial){
-                    left = i;
-                    break;
-                }
-            }
-        }
-        for(int i = middle; i < aud[row].length - quan;i++){
-            if(aud[row][i] == '#'){
-                boolean avial = true;
-                for(int j = 1; j <= quan;j++){
-                    if(aud[row][i+j] == '#'){
-                        avial = true;
-                    }
-                    else{
-                        avial = false;
-                    }
-                }
-                if(avial){
-                    right = i;
-                    break;
-                }
-            }
-        }
-        if(left == 999)
-            return 999;
-        if(Math.abs(middle - left ) < Math.abs(middle - right)){
-            return left + quan + 1;
-        }
-        else
-        {
-            return right;
-        }
-        //return Math.min(right,left - quan);
-    }
-     */
     //looks for seat closets to the middle
     public static int findBest(char[][] aud, int row, int quan) {
         int middle = (aud[0].length - 1) / 2;
