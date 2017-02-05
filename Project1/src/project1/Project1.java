@@ -16,7 +16,7 @@ public class Project1 {
         char[][] aud;
         int row = 0;
         int seat = 0;
-        int quan;
+        int quan = 0;
         boolean running = true;
         //Promts user to pick a auditorium, until they exit
         while (running) {
@@ -41,7 +41,7 @@ public class Project1 {
                 System.out.println("Which Row would you like to book for");
                 while(roww){
                     row = inputS.nextInt() - 1;
-                    if(row >= aud.length){
+                    if(row >= aud.length || row < 0){
                         System.out.println("Not a valid row, enter a new row");
                     }
                     else{
@@ -53,7 +53,7 @@ public class Project1 {
                 boolean seatw = true;
                 while(seatw){
                     seat = inputS.nextInt() - 1;
-                    if(seat >= aud[0].length){
+                    if(seat >= aud[0].length || seat < 0){
                         System.out.println("Not a valid seat, enter a new seat");
                     }
                     else{
@@ -62,7 +62,6 @@ public class Project1 {
                 }
                 
                 System.out.println("How many seats would you like");
-                quan = inputS.nextInt();
                 boolean quanw = true;
                 while(quanw){
                     quan = inputS.nextInt();
@@ -73,7 +72,6 @@ public class Project1 {
                         quanw = false;
                     }
                 }
-                
                 //checks if user enterd an open seat
                 if (available(aud, row, seat, quan)) {
                     reserve(aud, row, seat, quan, file);
